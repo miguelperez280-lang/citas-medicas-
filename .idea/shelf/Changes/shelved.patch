@@ -1,0 +1,574 @@
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1792385162706)
++++ b/.idea/.gitignore	(date 1792385162706)
+@@ -0,0 +1,10 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Ignored default folder with query files
++/queries/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: src/dominio/domain/enums/EstadoCita.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/enums/EstadoCita.java b/src/dominio/domain/enums/EstadoCita.java
+new file mode 100644
+--- /dev/null	(date 1792385614370)
++++ b/src/dominio/domain/enums/EstadoCita.java	(date 1792385614370)
+@@ -0,0 +1,10 @@
++//Las enumeraciones en Java son un tipo especial de clase que representa un conjunto de constantes. En este caso, la enumeración EstadoCita define los posibles estados que puede tener una cita en el sistema de la clínica. Los estados definidos son: Programada, Confirmada, Cancelada y Realizada. Esta enumeración se utiliza para garantizar que las citas solo puedan tener uno de estos valores predefinidos, lo que ayuda a mantener la integridad de los datos y facilita la gestión del flujo de trabajo relacionado con las citas médicas.
++
++package dominio.domain.enums;
++
++public enum EstadoCita {
++    Programada,
++    Confirmada,
++    Cancelada,
++    Realizada
++}
+Index: src/dominio/domain/enums/Rol.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/enums/Rol.java b/src/dominio/domain/enums/Rol.java
+new file mode 100644
+--- /dev/null	(date 1792385614693)
++++ b/src/dominio/domain/enums/Rol.java	(date 1792385614693)
+@@ -0,0 +1,9 @@
++package dominio.domain.enums;
++
++public enum Rol {
++    Medico,
++    Recepcionista,
++    Paciente,
++    Administrador,
++    Coordinador
++}
+\ No newline at end of file
+Index: src/dominio/domain/enums/NivelRiesgo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/enums/NivelRiesgo.java b/src/dominio/domain/enums/NivelRiesgo.java
+new file mode 100644
+--- /dev/null	(date 1792385614664)
++++ b/src/dominio/domain/enums/NivelRiesgo.java	(date 1792385614664)
+@@ -0,0 +1,7 @@
++package dominio.domain.enums;
++
++public enum NivelRiesgo {
++    Bajo,
++    Medio,
++    Alto
++}
+Index: src/dominio/domain/enums/TipoAlerta.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/enums/TipoAlerta.java b/src/dominio/domain/enums/TipoAlerta.java
+new file mode 100644
+--- /dev/null	(date 1792385614784)
++++ b/src/dominio/domain/enums/TipoAlerta.java	(date 1792385614784)
+@@ -0,0 +1,7 @@
++package dominio.domain.enums;
++
++public enum TipoAlerta {
++    riesgo_alto,
++    cita_incumplida,
++    paciente_sin_control
++}
+\ No newline at end of file
+Index: src/dominio/domain/Alerta.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/Alerta.java b/src/dominio/domain/Alerta.java
+new file mode 100644
+--- /dev/null	(date 1792385614585)
++++ b/src/dominio/domain/Alerta.java	(date 1792385614585)
+@@ -0,0 +1,59 @@
++package dominio.domain;
++
++import com.clinica.clinica.domain.enums.TipoAlerta;
++import jakarta.persistence.*;
++import java.time.LocalDateTime;
++
++@Entity
++@Table(name = "alertas")
++public class Alerta {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    @Enumerated(EnumType.STRING)
++    @Column(name = "tipo_alerta", nullable = false)
++    private TipoAlerta tipo;
++
++    @Column(name = "mensaje", nullable = false)
++    private String mensaje;
++
++    @Column(name = "fecha_creacion", nullable = false)
++    private LocalDateTime fechaCreacion = LocalDateTime.now();
++
++    @Column(name = "atendida", nullable = false)
++    private Boolean atendida = false;
++
++    //----------------------------------------------------------------  
++    @ManyToOne
++    @JoinColumn(name = "paciente_id", nullable = false)
++    private Paciente paciente;
++//----------------------------------------------------------------  
++
++    public Alerta() {}
++
++    public Alerta(TipoAlerta tipo, String mensaje, Paciente paciente) {
++        this.tipo = tipo;
++        this.mensaje = mensaje;
++        this.paciente = paciente;
++    }
++
++    public Long getId() { return id; }
++    public void setId(Long id) { this.id = id; }
++
++    public TipoAlerta getTipo() { return tipo; }
++    public void setTipo(TipoAlerta tipo) { this.tipo = tipo; }
++
++    public String getMensaje() { return mensaje; }
++    public void setMensaje(String mensaje) { this.mensaje = mensaje; }
++
++    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
++    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
++
++    public Boolean getAtendida() { return atendida; }
++    public void setAtendida(Boolean atendida) { this.atendida = atendida; }
++
++    public Paciente getPaciente() { return paciente; }
++    public void setPaciente(Paciente paciente) { this.paciente = paciente; }
++}
+\ No newline at end of file
+Index: src/dominio/domain/Cita.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/Cita.java b/src/dominio/domain/Cita.java
+new file mode 100644
+--- /dev/null	(date 1792385614473)
++++ b/src/dominio/domain/Cita.java	(date 1792385614473)
+@@ -0,0 +1,63 @@
++package dominio.domain;
++
++import com.clinica.clinica.domain.enums.EstadoCita;
++import jakarta.persistence.*; 
++import java.time.LocalDateTime;
++
++@Entity
++@Table(name = "Citas")
++public class Cita {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY) 
++    private Long id;
++
++    @Column(name= "fecha_hora", nullable = false)
++    private LocalDateTime fecha_hora; // Anotación que indica que el atributo fecha_hora no puede ser nulo en la tabla "citas". Esto asegura que todas las citas tengan una fecha y hora asignadas, evitando registros incompletos en la base de datos.
++
++    @Enumerated(EnumType.STRING)
++    @Column(name = "estado", nullable = false)
++    private EstadoCita estado = EstadoCita.Programada;
++
++    @Column(name = "motivo_cancelacion")
++    private String motivo_cancelacion;
++    
++//----------------------------------------------------------------  
++@ManyToOne // Anotación que indica que existe una relación uno a uno entre la entidad Paciente y la entidad Usuario. Cada paciente está asociado a un único usuario en el sistema de la clínica.
++@JoinColumn(name = "paciente_id", nullable = false)
++private Paciente paciente; // Atributo que representa la relación con la entidad Usuario. Este atributo permite acceder a la información del usuario asociado al paciente, como su nombre, correo y rol en el sistema de la clínica.
++
++@ManyToOne // Anotación que indica que existe una relación uno a uno entre la entidad Paciente y la entidad Usuario. Cada paciente está asociado a un único usuario en el sistema de la clínica.
++@JoinColumn(name = "medico_id", nullable = false) //medico_id es la clave foránea que hace referencia a la tabla de usuarios, ya que un médico es un tipo de usuario en el sistema de la clínica.
++private Usuario medico; // Atributo que representa la relación con la entidad Usuario. Este atributo permite acceder a la información del usuario asociado al paciente, como su nombre, correo y rol en el sistema de la clínica.
++//----------------------------------------------------------------  
++
++
++public Cita() {}
++    public Cita(LocalDateTime fecha_hora, EstadoCita estado, String motivo_cancelacion, Paciente paciente, Usuario medico) {
++        this.fecha_hora = fecha_hora;
++        this.estado = estado;
++        this.motivo_cancelacion = motivo_cancelacion;
++        this.paciente = paciente;
++        this.medico = medico;
++    }
++
++    public Long getId() { return id; }
++    public void setId(Long id) { this.id = id; }
++
++    public LocalDateTime getFechaHora() { return fecha_hora; }
++    public void setFechaHora(LocalDateTime fecha_hora) { this.fecha_hora = fecha_hora; }
++
++    public EstadoCita getEstado() { return estado; }
++    public void setEstado(EstadoCita estado) { this.estado = estado; }
++
++    public String getMotivoCancelacion() { return motivo_cancelacion; }
++    public void setMotivoCancelacion(String motivo_cancelacion) { this.motivo_cancelacion = motivo_cancelacion; }
++
++    public Paciente getPaciente() { return paciente; }
++    public void setPaciente(Paciente paciente) { this.paciente = paciente; }
++
++    public Usuario getMedico() { return medico; }
++    public void setMedico(Usuario medico) { this.medico = medico; }
++
++}
+\ No newline at end of file
+Index: src/dominio/domain/Paciente.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/Paciente.java b/src/dominio/domain/Paciente.java
+new file mode 100644
+--- /dev/null	(date 1792385614960)
++++ b/src/dominio/domain/Paciente.java	(date 1792385614960)
+@@ -0,0 +1,67 @@
++package dominio.domain;
++
++import com.clinica.clinica.domain.enums.NivelRiesgo;
++import jakarta.persistence.*; 
++
++@Entity
++@Table(name = "Pacientes")
++public class Paciente {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY) 
++    private Long id;
++
++    @Column(name = "documento", nullable = false, unique = true, length = 11)
++    private String documento;
++
++    @Column(name = "nombre_completo", nullable = false, length = 100)
++    private String nombre_completo;
++
++    @Column(name = "telefono", nullable = false, length = 15)
++    private String telefono;
++
++    @Enumerated(EnumType.STRING)
++    @Column(name = "nivel_riesgo", nullable = false)
++    private NivelRiesgo nivelRiesgo = NivelRiesgo.Bajo;
++
++    @Column(name = "citas_incumplidas", nullable = false)
++    private int citas_incumplidas = 0; // Valor predeterminado para el número de citas incumplidas, que se establece como 0 al crear un nuevo paciente. Esto asegura que todos los pacientes tengan un valor inicial para este atributo.
++
++    @Column(name = "requiere_seguimiento", nullable = false)
++    private boolean requiere_seguimiento = false; // Valor predeterminado para indicar si el paciente requiere seguimiento, que se establece como false al crear un nuevo paciente.
++
++
++//----------------------------------------------------------------  
++@OneToOne // Anotación que indica que existe una relación uno a uno entre la entidad Paciente y la entidad Usuario. Cada paciente está asociado a un único usuario en el sistema de la clínica.
++@JoinColumn(name = "usuario_id", nullable = true) 
++private Usuario usuario; // Atributo que representa la relación con la entidad Usuario. Este atributo permite acceder a la información del usuario asociado al paciente, como su nombre, correo y rol en el sistema de la clínica.
++
++//----------------------------------------------------------------  
++
++
++public Paciente() {}
++    public Paciente(String documento, String nombre_completo, String telefono, NivelRiesgo nivelRiesgo) {
++        this.documento = documento;
++        this.nombre_completo = nombre_completo;
++        this.telefono = telefono;
++        this.nivelRiesgo = nivelRiesgo;
++    }
++
++    public Long getId() { return id; }
++    public void setId(Long id) { this.id = id; }
++
++    public String getDocumento() { return documento; }
++    public void setDocumento(String documento) { this.documento = documento; }
++
++    public String getNombreCompleto() { return nombre_completo; }
++    public void setNombreCompleto(String nombre_completo) { this.nombre_completo = nombre_completo; }
++
++    public String getTelefono() { return telefono; }
++    public void setTelefono(String telefono) { this.telefono = telefono; }
++
++    public NivelRiesgo getNivelRiesgo() { return nivelRiesgo; }
++    public void setNivelRiesgo(NivelRiesgo nivelRiesgo) { this.nivelRiesgo = nivelRiesgo; }
++
++    public Usuario getUsuario() { return usuario; }
++    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
++}
+\ No newline at end of file
+Index: src/dominio/domain/Usuario.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/Usuario.java b/src/dominio/domain/Usuario.java
+new file mode 100644
+--- /dev/null	(date 1792385614844)
++++ b/src/dominio/domain/Usuario.java	(date 1792385614844)
+@@ -0,0 +1,54 @@
++package dominio.domain;
++
++import com.clinica.clinica.domain.enums.Rol;
++import jakarta.persistence.*; //Importa las anotaciones y clases necesarias para la persistencia de datos utilizando JPA (Jakarta Persistence API), como @Entity, @Table, @Id, @GeneratedValue, @Column y @Enumerated.
++
++@Entity
++@Table(name = "Usuarios")
++public class Usuario {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY) // Anotación que indica que el atributo id es la clave primaria de la entidad y que su valor se generará automáticamente utilizando la estrategia de identidad de la base de datos.
++    private Long id;
++
++    @Column(name = "nombre", nullable = false, length = 100) // Anotación que indica que el atributo nombre no puede ser nulo y tiene una longitud máxima de 100 caracteres en la tabla "usuarios".
++    private String nombre;
++
++    @Column(name = "correo", nullable = false, unique = true, length = 100) // Anotación que indica que el atributo correo no puede ser nulo y debe ser único en la tabla "usuarios", evitando duplicados en la base de datos.
++    private String correo;
++
++    @Column(name = "contrasena", nullable = false, length = 100)
++    private String contrasena;
++
++    @Enumerated(EnumType.STRING)
++    @Column(name = "rol", nullable = false)
++    private Rol rol;
++
++    //--------------------------------------------------------------
++    
++    public Usuario() {} // Constructor por defecto de la clase Usuario. Es necesario para que JPA pueda crear instancias de la entidad Usuario al recuperar datos de la base de datos.
++
++// Constructor de la clase Usuario que inicializa los atributos nombre, correo, contrasena y rol. Este constructor se utiliza para crear instancias de Usuario con los valores proporcionados.
++    public Usuario(String nombre, String correo, String contrasena, Rol rol) {
++        this.nombre = nombre;
++        this.correo = correo;
++        this.contrasena = contrasena;
++        this.rol = rol;
++    }
++
++// Getters y Setters para los atributos de la clase Usuario. Permiten acceder y modificar los valores de id, nombre, correo, contrasena y rol.
++    public Long getId() { return id; }
++    public void setId(Long id) { this.id = id; }
++
++    public String getNombre() { return nombre; }
++    public void setNombre(String nombre) { this.nombre = nombre; }
++
++    public String getCorreo() { return correo; }
++    public void setCorreo(String correo) { this.correo = correo; }
++
++    public String getContrasena() { return contrasena; }
++    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
++
++    public Rol getRol() { return rol; }
++    public void setRol(Rol rol) { this.rol = rol; }
++}
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1792385151021)
++++ b/.idea/misc.xml	(date 1792385151021)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectRootManager" version="2" default="true" project-jdk-name="openjdk-27" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: src/dominio/domain/SeguimientoClinico.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/dominio/domain/SeguimientoClinico.java b/src/dominio/domain/SeguimientoClinico.java
+new file mode 100644
+--- /dev/null	(date 1792385615442)
++++ b/src/dominio/domain/SeguimientoClinico.java	(date 1792385615442)
+@@ -0,0 +1,63 @@
++package dominio.domain;
++
++import jakarta.persistence.*; 
++import java.time.LocalDateTime;
++
++@Entity
++@Table(name = "seguimiento_clinico")
++public class SeguimientoClinico {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY) 
++    private Long id;
++
++    @Column(name = "fecha_hora", nullable = false)
++    private LocalDateTime fecha_registro = LocalDateTime.now(); // Valor predeterminado para la fecha y hora de registro, que se establece como la fecha y hora actual al crear un nuevo seguimiento clínico. Esto asegura que todos los seguimientos clínicos tengan una fecha y hora asignadas, incluso si no se proporciona explícitamente al crear la instancia de SeguimientoClinico.
++
++    @Column(name = "observaciones", columnDefinition = "TEXT")
++    private String observaciones;
++
++    @Column(name = "recomendaciones", columnDefinition = "TEXT")
++    private String recomendaciones;
++
++    
++//----------------------------------------------------------------  
++@ManyToOne // Anotación que indica que existe una relación uno a uno entre la entidad Paciente y la entidad Usuario. Cada paciente está asociado a un único usuario en el sistema de la clínica.
++@JoinColumn(name = "paciente_id", nullable = false)
++private Paciente paciente; // Atributo que representa la relación con la entidad Usuario. Este atributo permite acceder a la información del usuario asociado al paciente, como su nombre, correo y rol en el sistema de la clínica.
++
++@ManyToOne // Anotación que indica que existe una relación uno a uno entre la entidad Paciente y la entidad Usuario. Cada paciente está asociado a un único usuario en el sistema de la clínica.
++@JoinColumn(name = "medico_id", nullable = false)
++private Usuario medico; // Atributo que representa la relación con la entidad Usuario. Este atributo permite acceder a la información del usuario asociado al paciente, como su nombre, correo y rol en el sistema de la clínica.
++//----------------------------------------------------------------  
++
++
++public SeguimientoClinico() {}
++
++    public SeguimientoClinico(LocalDateTime fecha_registro, String observaciones, String recomendaciones, Paciente paciente, Usuario medico) {
++        this.fecha_registro = fecha_registro;
++        this.observaciones = observaciones;
++        this.recomendaciones = recomendaciones;
++        this.paciente = paciente;
++        this.medico = medico;
++    }
++
++    public Long getId() { return id; }
++    public void setId(Long id) { this.id = id; }
++
++    public LocalDateTime getFechaRegistro() { return fecha_registro; }
++    public void setFechaRegistro(LocalDateTime fecha_registro) { this.fecha_registro = fecha_registro; }
++
++    public String getObservaciones() { return observaciones; }
++    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
++
++    public String getRecomendaciones() { return recomendaciones; }
++    public void setRecomendaciones(String recomendaciones) { this.recomendaciones = recomendaciones; }
++
++    public Paciente getPaciente() { return paciente; }
++    public void setPaciente(Paciente paciente) { this.paciente = paciente; }
++
++    public Usuario getMedico() { return medico; }
++    public void setMedico(Usuario medico) { this.medico = medico; }
++
++}
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null	(date 1792385144352)
++++ b/.gitignore	(date 1792385144352)
+@@ -0,0 +1,30 @@
++### IntelliJ IDEA ###
++out/
++!**/src/main/**/out/
++!**/src/test/**/out/
++.kotlin
++
++### Eclipse ###
++.apt_generated
++.classpath
++.factorypath
++.project
++.settings
++.springBeans
++.sts4-cache
++bin/
++!**/src/main/**/bin/
++!**/src/test/**/bin/
++
++### NetBeans ###
++/nbproject/private/
++/nbbuild/
++/dist/
++/nbdist/
++/.nb-gradle/
++
++### VS Code ###
++.vscode/
++
++### Mac OS ###
++.DS_Store
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1792385175163)
++++ b/.idea/vcs.xml	(date 1792385175163)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: Citasmedicas.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Citasmedicas.iml b/Citasmedicas.iml
+new file mode 100644
+--- /dev/null	(date 1792385150866)
++++ b/Citasmedicas.iml	(date 1792385150866)
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="JAVA_MODULE" version="4">
++  <component name="NewModuleRootManager" inherit-compiler-output="true">
++    <exclude-output />
++    <content url="file://$MODULE_DIR$">
++      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
++    </content>
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	(date 1792385150959)
++++ b/.idea/modules.xml	(date 1792385150959)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/Citasmedicas.iml" filepath="$PROJECT_DIR$/Citasmedicas.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/src/Main.java b/src/Main.java
+new file mode 100644
